@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17382f">
+  <meta name="description" content="Explore WPI, find five puzzles, and collect clues to uncover Gompei's hiding spot.">
+  <title>Lost Mysteries of WPI</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Lost Mysteries of WPI home"><span class="brand-mark" aria-hidden="true">✦</span><span>LOST MYSTERIES<br><small>OF WPI</small></span></a>
+    <nav aria-label="Main navigation">
+      <a href="#how-to-play">How to play</a>
+      <a href="#locations">Locations</a>
+      <a href="#field-notes">Field notes</a>
+    </nav>
+    <a class="header-cta" href="#locations">Explore the trail <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span> A CAMPUS-WIDE MYSTERY</p>
+        <h1 id="hero-title">The campus has<br><em>secrets.</em><br>Find them.</h1>
+        <p class="hero-lede">Five buildings. Five puzzles. One trail of clues leading to Gompei’s secret hiding spot. Gather your friends, follow your curiosity, and see where the mystery takes you.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#locations">See the locations <span aria-hidden="true">↗</span></a><a class="text-link" href="#how-to-play">How it works <span aria-hidden="true">↓</span></a></div>
+        <p class="hero-footnote">Explore at your own pace · Play solo or with friends</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art-grid"></div>
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="map-label label-one">UNITY</div><div class="map-label label-two">FULLER</div><div class="map-label label-three">CC</div>
+        <div class="trail trail-one"></div><div class="trail trail-two"></div>
+        <div class="pin pin-one"><span>1</span></div><div class="pin pin-two"><span>2</span></div><div class="pin pin-three"><span>3</span></div><div class="pin pin-four"><span>4</span></div><div class="pin pin-five"><span>5</span></div>
+        <div class="compass">N <span>✧</span></div>
+        <div class="art-caption">FIELD GUIDE <span>01 / 05</span></div>
+      </div>
+    </section>
+
+    <section class="intro section-wrap" id="how-to-play" aria-labelledby="how-title">
+      <div class="section-heading"><p class="eyebrow">THE ADVENTURE</p><h2 id="how-title">A mystery made<br>for exploring.</h2></div>
+      <div class="steps">
+        <article><span class="step-number">01</span><h3>Find a location</h3><p>Visit one of the campus buildings on the trail. Keep an eye out for a puzzle or its QR code.</p></article>
+        <article><span class="step-number">02</span><h3>Solve the puzzle</h3><p>Each stop presents a different challenge. Work together, think creatively, and collect its clue.</p></article>
+        <article><span class="step-number">03</span><h3>Connect the clues</h3><p>Bring your discoveries together to uncover Gompei’s secret hiding spot.</p></article>
+      </div>
+    </section>
+
+    <section class="locations-section" id="locations" aria-labelledby="locations-title">
+      <div class="section-wrap">
+        <div class="locations-header"><div><p class="eyebrow">THE TRAIL</p><h2 id="locations-title">Five places to begin.</h2></div><p>The planned puzzle stops are listed below. You can start exploring wherever curiosity takes you.</p></div>
+        <div class="location-list" id="location-list"></div>
+      </div>
+    </section>
+
+    <section class="notes-section section-wrap" id="field-notes" aria-labelledby="notes-title">
+      <div class="notes-intro"><p class="eyebrow">YOUR FIELD NOTES</p><h2 id="notes-title">Keep the pieces together.</h2><p>Track the places you’ve explored and jot down clues as you go. Your notes stay in this browser on this device.</p><div class="progress" aria-live="polite"><strong id="progress-count">0 / 5</strong><span>places explored</span><div class="progress-track"><div id="progress-fill"></div></div></div></div>
+      <div class="notebook"><div class="notebook-top"><span>EXPLORER'S NOTEBOOK</span><span aria-hidden="true">✦</span></div><label for="clue-notes">Clues & observations</label><textarea id="clue-notes" rows="7" maxlength="5000" placeholder="A symbol, a phrase, a hunch... write it down here."></textarea><div class="notebook-bottom"><span id="save-status" role="status">Saved on this device</span><button type="button" id="clear-notes">Clear notes</button></div></div>
+    </section>
+
+    <section class="closing"><div class="section-wrap closing-inner"><span class="closing-symbol" aria-hidden="true">✦</span><div><p class="eyebrow">READY WHEN YOU ARE</p><h2>Every secret starts<br>with a first step.</h2></div><a class="button button-light" href="#locations">Explore the locations <span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer><span>© Lost Mysteries of WPI</span><span>A student-created campus adventure</span><a href="#top">Back to top ↑</a></footer>
+</body>
+</html>
