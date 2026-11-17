@@ -1,6 +1,6 @@
 # Lost Mysteries of WPI
 
-A mobile-first main page for a campus puzzle trail. Visitors see their collected locations and progress immediately, then a clue notebook and a compact list of five planned puzzle stops. Progress and notes are stored in the visitor's current browser through `localStorage`.
+A mobile-first main page for a campus puzzle trail. Visitors see their collected locations and progress immediately, followed by a compact list of five planned puzzle stops. Progress is stored in the visitor's current browser through `localStorage`.
 
 ## Run locally
 
@@ -12,4 +12,4 @@ This repository is named `Xunn3714.github.io`. In the repository's **Settings â†
 
 ## Team integration
 
-The current location list comes from the project one-pager and can be edited in `script.js` once final stops are decided. Puzzle pages and QR-code routes can link back to the `#locations` or `#field-notes` sections. The browser's saved notes and checkmarks are a simple standalone main-page feature. Account-based progress can be connected when the login work is ready.
+The current location list comes from the project one-pager and can be edited in `script.js` once final stops are decided. Puzzle pages and QR-code routes can link back to the `#locations` section. Account-based progress can be connected when the login work is ready.

@@ -7,11 +7,8 @@ const locations = [
 ];
 
 const progressKey = 'lost-mysteries-progress-v1';
-const notesKey = 'lost-mysteries-notes-v1';
 const list = document.querySelector('#location-list');
 const collectedList = document.querySelector('#collected-list');
-const notes = document.querySelector('#clue-notes');
-const status = document.querySelector('#save-status');
 
 function storedProgress() {
   try {
@@ -43,7 +40,7 @@ function updateProgress() {
   try {
     localStorage.setItem(progressKey, JSON.stringify(checked));
   } catch {
-    status.textContent = 'Browser storage unavailable';
+    console.warn('Progress could not be saved in this browser.');
   }
 }
 
@@ -56,22 +53,3 @@ locations.forEach((location, index) => {
 });
 list.addEventListener('change', updateProgress);
 updateProgress();
-
-try {
-  notes.value = localStorage.getItem(notesKey) || '';
-} catch {
-  status.textContent = 'Browser storage unavailable';
-}
-notes.addEventListener('input', () => {
-  try {
-    localStorage.setItem(notesKey, notes.value);
-    status.textContent = 'Saved on this device';
-  } catch {
-    status.textContent = 'Could not save notes';
-  }
-});
-document.querySelector('#clear-notes').addEventListener('click', () => {
-  notes.value = '';
-  notes.dispatchEvent(new Event('input'));
-  notes.focus();
-});

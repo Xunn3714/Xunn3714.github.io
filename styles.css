@@ -7,9 +7,8 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; }
-button, textarea { font: inherit; }
 a { color: inherit; text-decoration: none; }
-.sr-only, .skip-link:not(:focus) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.skip-link:not(:focus) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 .skip-link:focus { position: absolute; top: 8px; left: 8px; z-index: 2; padding: 8px; background: white; }
 .app-shell { max-width: 560px; min-height: 100vh; margin: auto; background: #faf9f4; box-shadow: 0 0 40px #17382f14; }
 .site-header { height: 64px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e4e9df; }
@@ -35,16 +34,10 @@ h1 { font-size: clamp(30px, 8vw, 40px); line-height: 1; font-weight: normal; mar
 .collected ul { display: flex; flex-wrap: wrap; gap: 7px; list-style: none; padding: 0; margin: 0; }
 .collected li:not(.empty-state) { padding: 7px 10px; border-radius: 30px; color: #183c32; background: #e1eadc; font: 600 12px Arial, sans-serif; }
 .empty-state { color: #b8cbbf; font: 12px Arial, sans-serif; }
-.notes-card, .locations, .instructions { margin-top: 14px; background: white; border: 1px solid #e2e7dd; border-radius: 14px; }
-.notes-card { padding: 18px 20px 13px; }
+.locations, .instructions { margin-top: 14px; background: white; border: 1px solid #e2e7dd; border-radius: 14px; }
 .section-title { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .section-title h2 { margin: 0; font-size: 24px; font-weight: normal; }
-.section-title > span { color: #c67a52; font-size: 20px; }
-textarea { width: 100%; min-height: 80px; margin-top: 12px; padding: 11px 12px; resize: vertical; border: 1px solid #dae2d7; border-radius: 9px; background: #fbfcf8; color: #183c32; font: 13px/1.5 Arial, sans-serif; }
-textarea:focus, input:focus-visible, button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid #bd744c; outline-offset: 2px; }
-textarea::placeholder { color: #86958b; }
-.notes-actions { display: flex; justify-content: space-between; align-items: center; font: 11px Arial, sans-serif; color: #77897c; }
-.notes-actions button { border: 0; background: none; padding: 7px 0 7px 12px; color: #315e4b; text-decoration: underline; cursor: pointer; }
+input:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid #bd744c; outline-offset: 2px; }
 .locations { padding: 18px 20px 4px; }
 .location-total { font: 11px Arial, sans-serif; color: #71877a !important; white-space: nowrap; }
 .section-description { margin: 7px 0 12px; font: 12px/1.4 Arial, sans-serif; color: #71877a; }
