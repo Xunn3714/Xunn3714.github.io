@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +10,7 @@
   <link rel="stylesheet" href="styles.css?v=5">
   <script src="script.js?v=3" defer></script>
 </head>
+
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="app-shell">
@@ -27,16 +29,26 @@
           <h1 id="dashboard-title">Your discoveries</h1>
           <div class="progress-count" aria-live="polite"><strong id="progress-count">0</strong><span>/ 5</span></div>
         </div>
-        <div class="progress-track" role="progressbar" aria-label="Places explored" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0" id="progress-track"><div id="progress-fill"></div></div>
+        <div class="progress-track" role="progressbar" aria-label="Places explored" aria-valuemin="0" aria-valuemax="5"
+          aria-valuenow="0" id="progress-track">
+          <div id="progress-fill"></div>
+        </div>
         <p class="progress-caption">places explored</p>
         <div class="collected">
           <h2>Collected locations</h2>
-          <ul id="collected-list" aria-live="polite"><li class="empty-state">Your discoveries will appear here.</li></ul>
+          <ul id="collected-list" aria-live="polite">
+            <li class="empty-state">Your discoveries will appear here.</li>
+          </ul>
         </div>
       </section>
 
       <section class="locations" id="locations" aria-labelledby="locations-title">
-        <div class="section-title"><div><p class="eyebrow">THE TRAIL</p><h2 id="locations-title">Puzzle locations</h2></div><span class="location-total">5 stops</span></div>
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">THE TRAIL</p>
+            <h2 id="locations-title">Puzzle locations</h2>
+          </div><span class="location-total">5 stops</span>
+        </div>
         <p class="section-description">Mark a location when you find its clue.</p>
         <div id="location-list" class="location-list"></div>
       </section>
@@ -55,4 +67,5 @@
     <footer>Lost Mysteries of WPI <span>·</span> A campus puzzle trail</footer>
   </div>
 </body>
+
 </html>
