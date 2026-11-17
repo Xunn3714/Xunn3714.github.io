@@ -1,6 +1,6 @@
 # Lost Mysteries of WPI
 
-A static main page for a campus puzzle trail. It introduces the game, lists the five planned puzzle locations, and lets visitors mark places explored and keep clue notes. Progress and notes are stored in the visitor's current browser through `localStorage`.
+A mobile-first main page for a campus puzzle trail. Visitors see their collected locations and progress immediately, then a clue notebook and a compact list of five planned puzzle stops. Progress and notes are stored in the visitor's current browser through `localStorage`.
 
 ## Run locally
 
