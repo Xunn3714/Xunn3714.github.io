@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#101329" />
+        <meta
+            name="description"
+            content="Rotate circuit tiles to connect power from input to output."
+        />
+        <title>Circuits — Lost Mysteries of WPI</title>
+        <link rel="stylesheet" href="styles.css?v=6" />
+    </head>
+    <body class="circuits-page">
+        <div class="page">
+            <header class="topbar">
+                <a class="brand" href="index.html"
+                    ><span class="brand-mark" aria-hidden="true">✦</span
+                    ><span>PUZZLEBOY</span></a
+                >
+                <a class="top-link" href="index.html">← Back to site</a>
+            </header>
+            <main>
+                <section class="intro" aria-labelledby="game-title">
+                    <p class="eyebrow">Lost Mysteries of WPI: Campus Grid</p>
+                    <h1 id="game-title">Restore the Circuit</h1>
+                    <p class="subtitle">
+                        Rotate the tiles to connect the power input to the
+                        output.
+                    </p>
+                </section>
+                <section class="game-panel" aria-label="Circuit puzzle">
+                    <div class="board-frame">
+                        <div
+                            class="board"
+                            id="board"
+                            role="group"
+                            aria-label="5 by 5 circuit grid"
+                        >
+                            <span
+                                class="terminal input"
+                                id="input-terminal"
+                                aria-label="Power start"
+                                >START</span
+                            >
+                            <span
+                                class="terminal output"
+                                id="output-terminal"
+                                aria-label="Power end"
+                                >END</span
+                            >
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <span id="status" class="status" aria-live="polite"
+                            >Route the current from left to right.</span
+                        >
+                        <span class="move-counter"
+                            >ROTATIONS <span id="moves">0</span></span
+                        >
+                    </div>
+                    <div class="below-board">
+                        <div class="legend" aria-label="Wire shapes">
+                            <span class="legend-item"
+                                ><span
+                                    class="legend-wire"
+                                    aria-hidden="true"
+                                ></span
+                                >Rotate tile</span
+                            >
+                            <span class="legend-item"
+                                ><span aria-hidden="true">＋</span
+                                >Four-way</span
+                            >
+                        </div>
+                        <div class="actions">
+                            <button class="action" id="restart" type="button">
+                                Restart
+                            </button>
+                        </div>
+                    </div>
+                </section>
+                <p class="help">
+                    Click or tap a tile to rotate it 90° · Connect the glowing
+                    input and output
+                </p>
+            </main>
+        </div>
+        <script>
+            (() => {
+                const size = 5;
+                const directions = {
+                    N: [0, -1],
+                    E: [1, 0],
+                    S: [0, 1],
+                    W: [-1, 0],
+                };
+                const opposite = { N: "S", E: "W", S: "N", W: "E" };
+                const order = ["N", "E", "S", "W"];
+                const baseConnections = {
+                    straight: ["N", "S"],
+                    L: ["N", "E"],
+                    T: ["N", "E", "S"],
+                    plus: ["N", "E", "S", "W"],
+                };
+                const solution = {
+                    "0,2": ["straight", 1],
+                    "1,2": ["straight", 1],
+                    "2,2": ["L", 3],
+                    "2,1": ["L", 1],
+                    "3,1": ["L", 2],
+                    "3,2": ["straight", 0],
+                    "3,3": ["L", 0],
+                    "4,3": ["straight", 1],
+                };
+                const board = document.querySelector("#board");
+                const status = document.querySelector("#status");
+                const moveCount = document.querySelector("#moves");
+                const inputTerminal = document.querySelector("#input-terminal");
+                const outputTerminal =
+                    document.querySelector("#output-terminal");
+                let moves = 0;
+                let won = false;
+                let tiles = [];
+                const key = (x, y) => `${x},${y}`;
+
+                function rotateConnections(type, turns) {
+                    return baseConnections[type].map((direction) => {
+                        let index = order.indexOf(direction);
+                        return order[(index + turns) % 4];
+                    });
+                }
+
+                function makeInitialTiles() {
+                    const types = [
+                        "straight",
+                        "straight",
+                        "L",
+                        "L",
+                        "T",
+                        "T",
+                        "plus",
+                    ];
+                    const result = [];
+                    for (let y = 0; y < size; y += 1) {
+                        for (let x = 0; x < size; x += 1) {
+                            const solutionTile = solution[key(x, y)];
+                            if (solutionTile) {
+                                const scrambled =
+                                    (solutionTile[1] +
+                                        1 +
+                                        ((x * 3 + y * 2) % 3)) %
+                                    4;
+                                result.push({
+                                    x,
+                                    y,
+                                    type: solutionTile[0],
+                                    rotation: scrambled,
+                                    solutionRotation: solutionTile[1],
+                                });
+                            } else {
+                                const type =
+                                    types[(x * 5 + y * 3) % types.length];
+                                const rotation = (x + y * 2 + 1) % 4;
+                                result.push({
+                                    x,
+                                    y,
+                                    type,
+                                    rotation,
+                                    solutionRotation: rotation,
+                                });
+                            }
+                        }
+                    }
+                    // Keep at least one guaranteed tile off the solved state.
+                    if (
+                        result.every(
+                            (tile) => tile.rotation === tile.solutionRotation,
+                        )
+                    ) {
+                        result[0].rotation = (result[0].rotation + 1) % 4;
+                    }
+                    return result;
+                }
+
+                function reset() {
+                    moves = 0;
+                    won = false;
+                    tiles = makeInitialTiles();
+                    status.textContent =
+                        "Route the current from left to right.";
+                    status.classList.remove("win");
+                    board.classList.remove("won");
+                    render();
+                }
+
+                function connections(tile) {
+                    return rotateConnections(tile.type, tile.rotation);
+                }
+
+                function tracePower() {
+                    const powered = new Set();
+                    const startKey = "0,2";
+                    const queue = [{ x: 0, y: 2, from: "W" }];
+                    while (queue.length) {
+                        const current = queue.shift();
+                        const tile = tiles.find(
+                            (item) =>
+                                item.x === current.x && item.y === current.y,
+                        );
+                        if (!tile) continue;
+                        const tileKey = key(tile.x, tile.y);
+                        if (powered.has(tileKey)) continue;
+
+                        const tileConnections = connections(tile);
+                        if (current.x === 0 && current.y === 2) {
+                            if (
+                                !tileConnections.includes("E") ||
+                                !tileConnections.includes("W")
+                            )
+                                continue;
+                        } else if (!tileConnections.includes(current.from)) {
+                            continue;
+                        }
+                        powered.add(tileKey);
+
+                        for (const direction of tileConnections) {
+                            if (direction === current.from) continue;
+                            const [dx, dy] = directions[direction];
+                            const nx = tile.x + dx;
+                            const ny = tile.y + dy;
+                            if (nx < 0 || ny < 0 || nx >= size || ny >= size)
+                                continue;
+                            const neighbor = tiles.find(
+                                (item) => item.x === nx && item.y === ny,
+                            );
+                            if (
+                                neighbor &&
+                                connections(neighbor).includes(
+                                    opposite[direction],
+                                )
+                            ) {
+                                queue.push({
+                                    x: nx,
+                                    y: ny,
+                                    from: opposite[direction],
+                                });
+                            }
+                        }
+                    }
+                    return powered;
+                }
+
+                function render() {
+                    board
+                        .querySelectorAll(".tile")
+                        .forEach((tile) => tile.remove());
+                    const powered = tracePower();
+                    const outputPowered = powered.has("4,3");
+                    inputTerminal.classList.toggle(
+                        "powered",
+                        powered.has("0,2"),
+                    );
+                    outputTerminal.classList.toggle("powered", outputPowered);
+
+                    for (let y = 0; y < size; y += 1) {
+                        for (let x = 0; x < size; x += 1) {
+                            const tileData = tiles.find(
+                                (item) => item.x === x && item.y === y,
+                            );
+                            const tile = document.createElement("button");
+                            tile.type = "button";
+                            tile.className = "tile";
+                            tile.style.gridColumn = String(x + 1);
+                            tile.style.gridRow = String(y + 1);
+                            tile.classList.toggle(
+                                "powered",
+                                powered.has(key(x, y)),
+                            );
+                            tile.setAttribute(
+                                "aria-label",
+                                `${tileData.type} wire at column ${x + 1}, row ${y + 1}. Click to rotate.`,
+                            );
+
+                            const svg = document.createElementNS(
+                                "http://www.w3.org/2000/svg",
+                                "svg",
+                            );
+                            svg.setAttribute("viewBox", "0 0 100 100");
+                            svg.setAttribute("aria-hidden", "true");
+                            const center = document.createElementNS(
+                                "http://www.w3.org/2000/svg",
+                                "circle",
+                            );
+                            center.setAttribute("cx", "50");
+                            center.setAttribute("cy", "50");
+                            center.setAttribute("r", "7");
+                            center.setAttribute(
+                                "fill",
+                                powered.has(key(x, y)) ? "#7af4df" : "#9098ba",
+                            );
+                            for (const direction of connections(tileData)) {
+                                const [dx, dy] = directions[direction];
+                                const line = document.createElementNS(
+                                    "http://www.w3.org/2000/svg",
+                                    "line",
+                                );
+                                line.setAttribute("class", "wire");
+                                line.setAttribute("x1", "50");
+                                line.setAttribute("y1", "50");
+                                line.setAttribute("x2", String(50 + dx * 50));
+                                line.setAttribute("y2", String(50 + dy * 50));
+                                svg.append(line);
+                            }
+                            svg.append(center);
+                            tile.append(svg);
+                            tile.addEventListener("click", () => {
+                                if (won) return;
+                                tileData.rotation = (tileData.rotation + 1) % 4;
+                                moves += 1;
+                                moveCount.textContent = String(moves);
+                                won = checkWin();
+                                if (won) {
+                                    status.textContent = `Circuit restored in ${moves} rotations!`;
+                                    status.classList.add("win");
+                                    board.classList.add("won");
+                                } else {
+                                    status.textContent =
+                                        "Keep routing the current.";
+                                    status.classList.remove("win");
+                                }
+                                render();
+                            });
+                            board.append(tile);
+                        }
+                    }
+                }
+
+                function checkWin() {
+                    const start = tiles.find(
+                        (tile) => tile.x === 0 && tile.y === 2,
+                    );
+                    if (
+                        !start ||
+                        !connections(start).includes("E") ||
+                        !connections(start).includes("W")
+                    )
+                        return false;
+                    const output = tiles.find(
+                        (tile) => tile.x === 4 && tile.y === 3,
+                    );
+                    if (!output || !connections(output).includes("W"))
+                        return false;
+                    const powered = tracePower();
+                    return powered.has("4,3");
+                }
+
+                document
+                    .querySelector("#restart")
+                    .addEventListener("click", reset);
+                reset();
+            })();
+        </script>
+    </body>
+</html>

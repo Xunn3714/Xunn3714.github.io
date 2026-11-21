@@ -2,17 +2,16 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#101329">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101329" />
     <meta name="description"
-        content="A small tile-based puzzle game. Push blocks, turn the swivel gate, and find the crystal.">
+        content="A small tile-based puzzle game. Push blocks, turn the swivel gate, and find the crystal." />
     <title>Puzzleboy — The Sunken Atrium</title>
-    <link rel="stylesheet" href="puzzleboy.css">
-
+    <link rel="stylesheet" href="styles.css?v=6" />
 </head>
 
-<body>
+<body class="puzzleboy-page">
     <div class="page">
         <header class="topbar">
             <a class="brand" href="index.html"><span class="brand-mark"
@@ -23,17 +22,19 @@
             <section class="intro" aria-labelledby="game-title">
                 <p class="eyebrow">Lost Mysteries of WPI: Fuller Labs</p>
                 <h1 id="game-title">Hidden in the Steam Tunnels</h1>
-                <p class="subtitle">Push your way through the Steam Tunnels and find Gompei's treasure.</p>
+                <p class="subtitle">
+                    Push your way through the Steam Tunnels and find
+                    Gompei's treasure.
+                </p>
             </section>
             <section class="game-panel" aria-label="Puzzle game">
                 <div class="board-frame">
                     <div class="board" id="board" role="img"
-                        aria-label="Tile puzzle board. Use the arrow keys or WASD to move.">
-                    </div>
+                        aria-label="Tile puzzle board. Use the arrow keys or WASD to move."></div>
                 </div>
-                <div class="game-info"><span id="status" class="status" aria-live="polite">Find the glowing crystal at
-                        the end
-                        of the lower passage.</span><span class="move-counter">MOVES <span id="moves">0</span></span>
+                <div class="game-info">
+                    <span id="status" class="status" aria-live="polite">Find the glowing crystal at the end of the lower
+                        passage.</span><span class="move-counter">MOVES <span id="moves">0</span></span>
                 </div>
                 <div class="below-board">
                     <div class="legend" aria-label="Game pieces">
@@ -46,26 +47,37 @@
                             gate</span>
                     </div>
                     <div class="actions">
-                        <button class="action" id="undo" type="button" aria-label="Undo last move">↶ Undo</button>
-                        <button class="action" id="restart" type="button">Restart</button>
+                        <button class="action" id="undo" type="button" aria-label="Undo last move">
+                            ↶ Undo
+                        </button>
+                        <button class="action" id="restart" type="button">
+                            Restart
+                        </button>
                     </div>
                 </div>
                 <div class="mobile-controls dpad" aria-label="Touch movement controls">
-                    <button class="up" type="button" data-move="0,-1" aria-label="Move up">↑</button>
-                    <button class="left" type="button" data-move="-1,0" aria-label="Move left">←</button>
-                    <button class="down" type="button" data-move="0,1" aria-label="Move down">↓</button>
-                    <button class="right" type="button" data-move="1,0" aria-label="Move right">→</button>
+                    <button class="up" type="button" data-move="0,-1" aria-label="Move up">
+                        ↑
+                    </button>
+                    <button class="left" type="button" data-move="-1,0" aria-label="Move left">
+                        ←
+                    </button>
+                    <button class="down" type="button" data-move="0,1" aria-label="Move down">
+                        ↓
+                    </button>
+                    <button class="right" type="button" data-move="1,0" aria-label="Move right">
+                        →
+                    </button>
                 </div>
             </section>
-            <p class="help"><kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> or <kbd>W</kbd> <kbd>A</kbd>
-                <kbd>S</kbd>
-                <kbd>D</kbd> to move · Push blocks into pits to fill them · Push a gray gate to turn it when its path is
-                clear ·
-                <kbd>Z</kbd> to undo
+            <p class="help">
+                <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> or
+                <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> to move
+                · Push blocks into pits to fill them · Push a gray gate to
+                turn it when its path is clear · <kbd>Z</kbd> to undo
             </p>
         </main>
     </div>
-
     <script>
         (() => {
             const width = 14;
@@ -73,150 +85,225 @@
             const floor = new Set();
             const addRoom = (x1, y1, x2, y2) => {
                 for (let y = y1; y <= y2; y += 1) {
-                    for (let x = x1; x <= x2; x += 1) floor.add(`${x},${y}`);
+                    for (let x = x1; x <= x2; x += 1)
+                        floor.add(`${x},${y}`);
                 }
             };
 
             addRoom(1, 0, 12, 1);
             addRoom(0, 2, 13, 4);
             addRoom(1, 5, 12, 8);
-            addRoom(1, 10, 12, 10)
+            addRoom(1, 10, 12, 10);
             addRoom(5, 9, 12, 9);
 
             const initial = {
                 player: { x: 10, y: 8 },
                 goal: { x: 1, y: 10 },
                 crateGroups: [
-                    ['4,1', '4,2'],
-                    ['2,3', '3,3', '4,3', '5,3'],
-                    ['4,4', '4,5'],
-                    ['8,3', '9,3', '10,3', '11,3'],
-                    ['9,1', '9,2'],
-                    ['9,4', '9,5']
+                    ["4,1", "4,2"],
+                    ["2,3", "3,3", "4,3", "5,3"],
+                    ["4,4", "4,5"],
+                    ["8,3", "9,3", "10,3", "11,3"],
+                    ["9,1", "9,2"],
+                    ["9,4", "9,5"],
                 ],
-                pits: ['5,9', '6,9', '7,9', '8,9', '9,9', '10,9', '11,9', '12,9', '2,10', '3,10', '4,10', '5,10', '6,10', '7,10', '8,10', '9,10', '10,10', '11,10', '12,10'],
+                pits: [
+                    "5,9",
+                    "6,9",
+                    "7,9",
+                    "8,9",
+                    "9,9",
+                    "10,9",
+                    "11,9",
+                    "12,9",
+                    "2,10",
+                    "3,10",
+                    "4,10",
+                    "5,10",
+                    "6,10",
+                    "7,10",
+                    "8,10",
+                    "9,10",
+                    "10,10",
+                    "11,10",
+                    "12,10",
+                ],
                 filledPits: [],
                 gates: [
-                    { x: 1, y: 1, shape: 'L', orientation: 45 },
-                    { x: 12, y: 1, shape: 'L', orientation: 90 },
-                    { x: 6, y: 4, shape: 'dash', orientation: 0 },
-                    { x: 1, y: 5, shape: 'L', orientation: 45 },
-                    { x: 12, y: 5, shape: 'L', orientation: 90 },
-                    { x: 4, y: 7, shape: 'L', orientation: 0 },
-                    { x: 9, y: 7, shape: 'L', orientation: 135 },
+                    { x: 1, y: 1, shape: "L", orientation: 45 },
+                    { x: 12, y: 1, shape: "L", orientation: 90 },
+                    { x: 6, y: 4, shape: "dash", orientation: 0 },
+                    { x: 1, y: 5, shape: "L", orientation: 45 },
+                    { x: 12, y: 5, shape: "L", orientation: 90 },
+                    { x: 4, y: 7, shape: "L", orientation: 0 },
+                    { x: 9, y: 7, shape: "L", orientation: 135 },
                 ],
                 moves: 0,
                 won: false,
             };
             let state = copyState(initial);
             const history = [];
-            const board = document.querySelector('#board');
-            const status = document.querySelector('#status');
-            const moveCount = document.querySelector('#moves');
+            const board = document.querySelector("#board");
+            const status = document.querySelector("#status");
+            const moveCount = document.querySelector("#moves");
             const key = (x, y) => `${x},${y}`;
-            const point = value => value.split(',').map(Number);
+            const point = (value) => value.split(",").map(Number);
             const inside = (x, y) => floor.has(key(x, y));
-            const cratePositions = state => state.crateGroups.flat();
-            const rotateOffset = ([x, y], direction) => direction > 0 ? [-y, x] : [y, -x];
-            const gateOffsets = gate => {
-                const offsets = gate.shape === 'single' ? [[0, 0]]
-                    : gate.shape === 'plus' ? [[0, 0], [0, -1], [1, 0], [0, 1], [-1, 0]]
-                        : gate.shape === 'dash' ? [[-1, 0], [0, 0], [1, 0]]
-                            : [[0, 0], [0, -1], [1, 0]];
-                return offsets.map(offset => {
+            const cratePositions = (state) => state.crateGroups.flat();
+            const rotateOffset = ([x, y], direction) =>
+                direction > 0 ? [-y, x] : [y, -x];
+            const gateOffsets = (gate) => {
+                const offsets =
+                    gate.shape === "single"
+                        ? [[0, 0]]
+                        : gate.shape === "plus"
+                            ? [
+                                [0, 0],
+                                [0, -1],
+                                [1, 0],
+                                [0, 1],
+                                [-1, 0],
+                            ]
+                            : gate.shape === "dash"
+                                ? [
+                                    [-1, 0],
+                                    [0, 0],
+                                    [1, 0],
+                                ]
+                                : [
+                                    [0, 0],
+                                    [0, -1],
+                                    [1, 0],
+                                ];
+                return offsets.map((offset) => {
                     let rotated = offset;
-                    for (let turn = 0; turn < gate.orientation; turn += 1) rotated = rotateOffset(rotated, 1);
+                    for (let turn = 0; turn < gate.orientation; turn += 1)
+                        rotated = rotateOffset(rotated, 1);
                     return rotated;
                 });
             };
-            const gateCells = gate => gateOffsets(gate).map(([x, y]) => key(gate.x + x, gate.y + y));
-            const allGateCells = gates => gates.flatMap(gateCells);
+            const gateCells = (gate) =>
+                gateOffsets(gate).map(([x, y]) =>
+                    key(gate.x + x, gate.y + y),
+                );
+            const allGateCells = (gates) => gates.flatMap(gateCells);
 
             function copyState(value) {
                 return {
                     player: { ...value.player },
                     goal: { ...value.goal },
-                    crateGroups: value.crateGroups.map(group => [...group]),
+                    crateGroups: value.crateGroups.map((group) => [
+                        ...group,
+                    ]),
                     pits: [...value.pits],
                     filledPits: [...value.filledPits],
-                    gates: value.gates.map(gate => ({ ...gate })),
+                    gates: value.gates.map((gate) => ({ ...gate })),
                     moves: value.moves,
                     won: value.won,
                 };
             }
 
-            function render(turningGateIndex = -1, turningFrom = null, turningDelta = 0) {
+            function render(
+                turningGateIndex = -1,
+                turningFrom = null,
+                turningDelta = 0,
+            ) {
                 board.replaceChildren();
                 for (let y = 0; y < height; y += 1) {
                     for (let x = 0; x < width; x += 1) {
                         const tileKey = key(x, y);
                         if (!inside(x, y)) continue;
-                        const tile = document.createElement('span');
-                        tile.className = 'tile';
+                        const tile = document.createElement("span");
+                        tile.className = "tile";
                         tile.style.gridColumn = String(x + 1);
                         tile.style.gridRow = String(y + 1);
-                        if (state.pits.includes(tileKey)) tile.classList.add('pit');
-                        if (state.filledPits.includes(tileKey)) tile.classList.add('filled-pit');
+                        if (state.pits.includes(tileKey))
+                            tile.classList.add("pit");
+                        if (state.filledPits.includes(tileKey))
+                            tile.classList.add("filled-pit");
                         if (x === state.goal.x && y === state.goal.y) {
-                            const goal = document.createElement('span');
-                            goal.className = 'goal';
-                            goal.textContent = '◆';
+                            const goal = document.createElement("span");
+                            goal.className = "goal";
+                            goal.textContent = "◆";
                             tile.append(goal);
                         }
-                        const crateGroup = state.crateGroups.find(group => group.includes(tileKey));
+                        const crateGroup = state.crateGroups.find((group) =>
+                            group.includes(tileKey),
+                        );
                         if (crateGroup) {
-                            const crate = document.createElement('span');
-                            crate.className = 'crate';
-                            for (const [direction, adjacentX, adjacentY] of [
-                                ['up', x, y - 1],
-                                ['right', x + 1, y],
-                                ['down', x, y + 1],
-                                ['left', x - 1, y],
-                            ]) {
-                                if (!crateGroup.includes(key(adjacentX, adjacentY))) continue;
-                                const link = document.createElement('span');
+                            const crate = document.createElement("span");
+                            crate.className = "crate";
+                            for (const [
+                                direction,
+                                adjacentX,
+                                adjacentY,
+                            ] of [
+                                    ["up", x, y - 1],
+                                    ["right", x + 1, y],
+                                    ["down", x, y + 1],
+                                    ["left", x - 1, y],
+                                ]) {
+                                if (
+                                    !crateGroup.includes(
+                                        key(adjacentX, adjacentY),
+                                    )
+                                )
+                                    continue;
+                                const link = document.createElement("span");
                                 link.className = `crate-link ${direction}`;
                                 crate.append(link);
                             }
                             tile.append(crate);
                         }
                         if (state.player.x === x && state.player.y === y) {
-                            const player = document.createElement('span');
-                            player.className = 'player';
-                            tile.classList.add('player-tile');
+                            const player = document.createElement("span");
+                            player.className = "player";
+                            tile.classList.add("player-tile");
                             tile.append(player);
                         }
                         board.append(tile);
                     }
                 }
                 state.gates.forEach((gate, index) => {
-                    const gateShape = document.createElement('span');
+                    const gateShape = document.createElement("span");
                     const isTurning = index === turningGateIndex;
-                    gateShape.className = `gate-shape ${gate.shape}${isTurning ? ' turning' : ''}`;
+                    gateShape.className = `gate-shape ${gate.shape}${isTurning ? " turning" : ""}`;
                     gateShape.style.gridColumn = `${gate.x} / span 3`;
                     gateShape.style.gridRow = `${gate.y} / span 3`;
-                    gateShape.style.setProperty('--gate-angle', `${gate.orientation * 90}deg`);
+                    gateShape.style.setProperty(
+                        "--gate-angle",
+                        `${gate.orientation * 90}deg`,
+                    );
                     if (isTurning) {
-                        gateShape.style.setProperty('--gate-from-angle', `${turningFrom * 90}deg`);
-                        gateShape.style.setProperty('--gate-to-angle', `${(turningFrom + turningDelta) * 90}deg`);
+                        gateShape.style.setProperty(
+                            "--gate-from-angle",
+                            `${turningFrom * 90}deg`,
+                        );
+                        gateShape.style.setProperty(
+                            "--gate-to-angle",
+                            `${(turningFrom + turningDelta) * 90}deg`,
+                        );
                     }
-                    gateOffsets({ ...gate, orientation: 0 }).forEach(([x, y]) => {
-                        const segment = document.createElement('span');
-                        segment.className = `swivel-segment${x === 0 && y === 0 ? ' pivot' : ''}`;
-                        segment.style.gridColumn = String(x + 2);
-                        segment.style.gridRow = String(y + 2);
-                        gateShape.append(segment);
-                    });
+                    gateOffsets({ ...gate, orientation: 0 }).forEach(
+                        ([x, y]) => {
+                            const segment = document.createElement("span");
+                            segment.className = `swivel-segment${x === 0 && y === 0 ? " pivot" : ""}`;
+                            segment.style.gridColumn = String(x + 2);
+                            segment.style.gridRow = String(y + 2);
+                            gateShape.append(segment);
+                        },
+                    );
                     board.append(gateShape);
                 });
-                board.classList.toggle('won', state.won);
+                board.classList.toggle("won", state.won);
                 moveCount.textContent = String(state.moves);
-                document.querySelector('#undo').disabled = history.length === 0;
+                document.querySelector("#undo").disabled =
+                    history.length === 0;
                 if (state.won) {
                     status.textContent = `Crystal found! You escaped in ${state.moves} moves.`;
-                    status.classList.add('win');
+                    status.classList.add("win");
                 } else {
-                    status.classList.remove('win');
+                    status.classList.remove("win");
                 }
             }
 
@@ -232,35 +319,51 @@
                 const ny = y + dy;
                 const target = key(nx, ny);
                 if (!inside(nx, ny)) {
-                    status.textContent = 'A solid wall blocks the way.';
+                    status.textContent = "A solid wall blocks the way.";
                     return;
                 }
 
-                const crateGroupIndex = state.crateGroups.findIndex(group => group.includes(target));
+                const crateGroupIndex = state.crateGroups.findIndex(
+                    (group) => group.includes(target),
+                );
                 if (crateGroupIndex !== -1) {
-                    const movingCrates = new Set(state.crateGroups[crateGroupIndex]);
+                    const movingCrates = new Set(
+                        state.crateGroups[crateGroupIndex],
+                    );
                     const crates = cratePositions(state);
 
-                    const gateCellsAhead = new Set(allGateCells(state.gates));
-                    const destinations = [...movingCrates].map(crate => {
+                    const gateCellsAhead = new Set(
+                        allGateCells(state.gates),
+                    );
+                    const destinations = [...movingCrates].map((crate) => {
                         const [crateX, crateY] = point(crate);
                         return key(crateX + dx, crateY + dy);
                     });
-                    const blocked = destinations.some(destination => {
-                        const [destinationX, destinationY] = point(destination);
-                        return !inside(destinationX, destinationY) || gateCellsAhead.has(destination) ||
-                            (crates.includes(destination) && !movingCrates.has(destination));
+                    const blocked = destinations.some((destination) => {
+                        const [destinationX, destinationY] =
+                            point(destination);
+                        return (
+                            !inside(destinationX, destinationY) ||
+                            gateCellsAhead.has(destination) ||
+                            (crates.includes(destination) &&
+                                !movingCrates.has(destination))
+                        );
                     });
                     if (blocked) {
-                        status.textContent = 'The block group cannot move; something is in the way.';
+                        status.textContent =
+                            "The block group cannot move; something is in the way.";
                         return;
                     }
 
                     saveStep();
                     state.player = { x: nx, y: ny };
-                    const allOverPits = destinations.every(destination => state.pits.includes(destination));
+                    const allOverPits = destinations.every((destination) =>
+                        state.pits.includes(destination),
+                    );
                     const filled = allOverPits ? destinations : [];
-                    state.pits = state.pits.filter(pit => !filled.includes(pit));
+                    state.pits = state.pits.filter(
+                        (pit) => !filled.includes(pit),
+                    );
                     state.filledPits.push(...filled);
                     if (allOverPits) {
                         state.crateGroups.splice(crateGroupIndex, 1);
@@ -268,15 +371,19 @@
                         state.crateGroups[crateGroupIndex] = destinations;
                     }
                     status.textContent = allOverPits
-                        ? `${filled.length === 1 ? 'A block fills the pit' : `${filled.length} blocks fill their pits`}.`
-                        : destinations.some(destination => state.pits.includes(destination))
-                            ? 'The block group passes over the pits together.'
-                            : `${movingCrates.size > 1 ? 'Block group' : 'Block'} pushed.`;
+                        ? `${filled.length === 1 ? "A block fills the pit" : `${filled.length} blocks fill their pits`}.`
+                        : destinations.some((destination) =>
+                            state.pits.includes(destination),
+                        )
+                            ? "The block group passes over the pits together."
+                            : `${movingCrates.size > 1 ? "Block group" : "Block"} pushed.`;
                     finishMove();
                     return;
                 }
 
-                const gateIndex = state.gates.findIndex(gate => gateCells(gate).includes(target));
+                const gateIndex = state.gates.findIndex((gate) =>
+                    gateCells(gate).includes(target),
+                );
                 if (gateIndex !== -1) {
                     const gate = state.gates[gateIndex];
                     const currentGateCells = gateCells(gate);
@@ -288,37 +395,70 @@
                     }
                     const [contactX, contactY] = [nx - gate.x, ny - gate.y];
                     const torque = contactX * dy - contactY * dx;
-                    if (torque === 0 && gate.shape !== 'single') {
-                        status.textContent = 'Push an arm from the side to turn the gate.';
+                    if (torque === 0 && gate.shape !== "single") {
+                        status.textContent =
+                            "Push an arm from the side to turn the gate.";
                         return;
                     }
-                    const rotation = gate.shape === 'single'
-                        ? (dx > 0 || dy < 0 ? 1 : -1)
-                        : Math.sign(torque);
-                    const turned = { ...gate, orientation: (gate.orientation + rotation + 4) % 4 };
+                    const rotation =
+                        gate.shape === "single"
+                            ? dx > 0 || dy < 0
+                                ? 1
+                                : -1
+                            : Math.sign(torque);
+                    const turned = {
+                        ...gate,
+                        orientation: (gate.orientation + rotation + 4) % 4,
+                    };
                     const occupied = gateCells(turned);
-                    const playerOffset = rotateOffset([x - gate.x, y - gate.y], rotation);
-                    const carriedPlayer = { x: gate.x + playerOffset[0], y: gate.y + playerOffset[1] };
-                    const carriedPlayerKey = key(carriedPlayer.x, carriedPlayer.y);
-                    const otherGateCells = allGateCells(state.gates.filter((_, index) => index !== gateIndex));
-                    const obstruction = occupied.find(cell => {
-                        const [gx, gy] = point(cell);
-                        if (!inside(gx, gy)) return 'wall';
-                        if (state.pits.includes(cell)) return 'pit';
-                        if (cratePositions(state).includes(cell)) return 'block';
-                        if (otherGateCells.includes(cell)) return 'another gate';
-                        return false;
-                    }) || (!inside(carriedPlayer.x, carriedPlayer.y) ? 'wall'
-                        : state.pits.includes(carriedPlayerKey) ? 'pit'
-                            : cratePositions(state).includes(carriedPlayerKey) ? 'block'
-                                : occupied.includes(carriedPlayerKey) || otherGateCells.includes(carriedPlayerKey) ? 'another gate'
-                                    : false);
+                    const playerOffset = rotateOffset(
+                        [x - gate.x, y - gate.y],
+                        rotation,
+                    );
+                    const carriedPlayer = {
+                        x: gate.x + playerOffset[0],
+                        y: gate.y + playerOffset[1],
+                    };
+                    const carriedPlayerKey = key(
+                        carriedPlayer.x,
+                        carriedPlayer.y,
+                    );
+                    const otherGateCells = allGateCells(
+                        state.gates.filter(
+                            (_, index) => index !== gateIndex,
+                        ),
+                    );
+                    const obstruction =
+                        occupied.find((cell) => {
+                            const [gx, gy] = point(cell);
+                            if (!inside(gx, gy)) return "wall";
+                            if (state.pits.includes(cell)) return "pit";
+                            if (cratePositions(state).includes(cell))
+                                return "block";
+                            if (otherGateCells.includes(cell))
+                                return "another gate";
+                            return false;
+                        }) ||
+                        (!inside(carriedPlayer.x, carriedPlayer.y)
+                            ? "wall"
+                            : state.pits.includes(carriedPlayerKey)
+                                ? "pit"
+                                : cratePositions(state).includes(
+                                    carriedPlayerKey,
+                                )
+                                    ? "block"
+                                    : occupied.includes(carriedPlayerKey) ||
+                                        otherGateCells.includes(
+                                            carriedPlayerKey,
+                                        )
+                                        ? "another gate"
+                                        : false);
                     if (obstruction) {
                         const reasons = {
-                            wall: 'a wall',
-                            pit: 'a pit',
-                            block: 'a block',
-                            'another gate': 'another gate',
+                            wall: "a wall",
+                            pit: "a pit",
+                            block: "a block",
+                            "another gate": "another gate",
                         };
                         status.textContent = `The gate cannot turn; its path is blocked by ${reasons[obstruction]}.`;
                         return;
@@ -327,14 +467,20 @@
                     state.gates[gateIndex] = turned;
                     state.player = carriedPlayer;
                     state.moves += 1;
-                    const gateName = gate.shape === 'single' ? 'gate' : gate.shape === 'plus' ? 'cross gate' : 'L-shaped gate';
-                    status.textContent = `The ${gateName} turns ${rotation > 0 ? 'clockwise' : 'counterclockwise'}.`;
+                    const gateName =
+                        gate.shape === "single"
+                            ? "gate"
+                            : gate.shape === "plus"
+                                ? "cross gate"
+                                : "L-shaped gate";
+                    status.textContent = `The ${gateName} turns ${rotation > 0 ? "clockwise" : "counterclockwise"}.`;
                     render(gateIndex, gate.orientation, rotation);
                     return;
                 }
 
                 if (state.pits.includes(target)) {
-                    status.textContent = 'The pit is too deep to cross. Fill it with a block.';
+                    status.textContent =
+                        "The pit is too deep to cross. Fill it with a block.";
                     return;
                 }
 
@@ -345,10 +491,13 @@
 
             function finishMove() {
                 state.moves += 1;
-                if (state.player.x === state.goal.x && state.player.y === state.goal.y) {
+                if (
+                    state.player.x === state.goal.x &&
+                    state.player.y === state.goal.y
+                ) {
                     state.won = true;
-                } else if (status.classList.contains('win')) {
-                    status.classList.remove('win');
+                } else if (status.classList.contains("win")) {
+                    status.classList.remove("win");
                 }
                 render();
             }
@@ -356,47 +505,65 @@
             function undo() {
                 if (history.length === 0) return;
                 state = history.pop();
-                status.textContent = 'Last move undone.';
-                status.classList.remove('win');
+                status.textContent = "Last move undone.";
+                status.classList.remove("win");
                 render();
             }
 
             function restart() {
                 state = copyState(initial);
                 history.length = 0;
-                status.textContent = 'Find the glowing crystal at the end of the lower passage.';
-                status.classList.remove('win');
+                status.textContent =
+                    "Find the glowing crystal at the end of the lower passage.";
+                status.classList.remove("win");
                 render();
             }
 
             const directions = {
-                ArrowUp: [0, -1], w: [0, -1], W: [0, -1],
-                ArrowDown: [0, 1], s: [0, 1], S: [0, 1],
-                ArrowLeft: [-1, 0], a: [-1, 0], A: [-1, 0],
-                ArrowRight: [1, 0], d: [1, 0], D: [1, 0],
+                ArrowUp: [0, -1],
+                w: [0, -1],
+                W: [0, -1],
+                ArrowDown: [0, 1],
+                s: [0, 1],
+                S: [0, 1],
+                ArrowLeft: [-1, 0],
+                a: [-1, 0],
+                A: [-1, 0],
+                ArrowRight: [1, 0],
+                d: [1, 0],
+                D: [1, 0],
             };
-            document.addEventListener('keydown', event => {
+            document.addEventListener("keydown", (event) => {
                 const direction = directions[event.key];
                 if (direction) {
                     event.preventDefault();
                     move(...direction);
-                } else if (event.key.toLowerCase() === 'z' && !event.repeat) {
+                } else if (
+                    event.key.toLowerCase() === "z" &&
+                    !event.repeat
+                ) {
                     event.preventDefault();
                     undo();
-                } else if (event.key.toLowerCase() === 'r' && !event.repeat) {
+                } else if (
+                    event.key.toLowerCase() === "r" &&
+                    !event.repeat
+                ) {
                     event.preventDefault();
                     restart();
                 }
             });
-            document.querySelector('#undo').addEventListener('click', undo);
-            document.querySelector('#restart').addEventListener('click', restart);
-            document.querySelectorAll('[data-move]').forEach(button => {
-                button.addEventListener('click', () => move(...button.dataset.move.split(',').map(Number)));
+            document.querySelector("#undo").addEventListener("click", undo);
+            document
+                .querySelector("#restart")
+                .addEventListener("click", restart);
+            document.querySelectorAll("[data-move]").forEach((button) => {
+                button.addEventListener("click", () =>
+                    move(...button.dataset.move.split(",").map(Number)),
+                );
             });
             render();
         })();
     </script>
-    
 </body>
 
 </html>
