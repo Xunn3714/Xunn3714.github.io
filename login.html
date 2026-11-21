@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Lost Mysteries of WPI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-shell">
+
+        <!-- Website Header -->
+        <header class="site-header">
+            <a class="brand" href="index.html">
+                <span class="brand-symbol">✦</span>
+                <span>Lost Mysteries <small>of WPI</small></span>
+            </a>
+            <a class="header-link" href="index.html">← Back to Home</a>
+        </header>
+
+        <!-- Main Login Page -->
+        <main>
+            <section class="login-card">
+                <div class="login-header">
+                    <p class="eyebrow">WELCOME, EXPLORER</p>
+                    <h1>Join the Adventure</h1>
+                    <p>Create an account or log in to continue your journey.</p>
+                </div>
+
+                <!-- Login and Registration Form -->
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your username"
+                            maxlength="30" autocomplete="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pin">4-Digit PIN</label>
+                        <input type="password" id="pin" name="pin" placeholder="Enter your PIN" inputmode="numeric"
+                            pattern="[0-9]{4}" maxlength="4" required>
+                    </div>
+
+                    <p id="login-message" role="status"></p>
+
+                    <div class="login-actions">
+                        <button type="button" id="login-btn" disabled>Log In</button>
+                        <button type="button" id="register-btn" disabled>Create Account</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const usernameInput = document.querySelector('#username');
+        const pinInput = document.querySelector('#pin');
+        const loginBtn = document.querySelector('#login-btn');
+        const registerBtn = document.querySelector('#register-btn');
+        const loginMessage = document.querySelector('#login-message');
+
+        // Validate username and PIN before enabling buttons
+        function validateInputs() {
+            const username = usernameInput.value.trim();
+            const pin = pinInput.value;
+
+            const validUsername = username.length >= 3 && username.length <= 30;
+            const validPin = /^[0-9]{4}$/.test(pin);
+
+            loginBtn.disabled = !(validUsername && validPin);
+            registerBtn.disabled = !(validUsername && validPin);
+        }
+
+        usernameInput.addEventListener('input', () => {
+            loginMessage.textContent = '';
+            validateInputs();
+        });
+
+        pinInput.addEventListener('input', () => {
+            pinInput.value = pinInput.value.replace(/\D/g, '').slice(0, 4);
+            loginMessage.textContent = '';
+            validateInputs();
+        });
+
+        // Account authentication will be connected to the backend later
+        loginBtn.addEventListener('click', () => {
+            loginMessage.textContent = 'Login is not connected yet.';
+        });
+
+        registerBtn.addEventListener('click', () => {
+            loginMessage.textContent = 'Registration is not connected yet.';
+        });
+
+        document.querySelector('#login-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+        });
+    </script>
+
+</body>
+
+</html>

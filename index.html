@@ -2,70 +2,134 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#183c32">
-  <meta name="description" content="Track your discoveries in the Lost Mysteries of WPI campus puzzle trail.">
-  <title>Lost Mysteries of WPI</title>
-  <link rel="stylesheet" href="styles.css?v=5">
-  <script src="script.js?v=3" defer></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#183c32">
+	<meta name="description" content="Track your discoveries in the Lost Mysteries of WPI campus puzzle trail.">
+	<title>Lost Mysteries of WPI</title>
+	<link rel="stylesheet" href="styles.css?v=5">
 </head>
 
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <div class="app-shell">
-    <header class="site-header">
-      <a class="brand" href="#main" aria-label="Lost Mysteries of WPI home">
-        <span class="brand-symbol" aria-hidden="true">✦</span>
-        <span>Lost Mysteries <small>of WPI</small></span>
-      </a>
-      <span class="header-link">Login</span>
-    </header>
+	<a class="skip-link" href="#main">Skip to content</a>
+	<div class="app-shell">
+		<header class="site-header">
+			<a class="brand" href="#main" aria-label="Lost Mysteries of WPI home">
+				<span class="brand-symbol" aria-hidden="true">✦</span>
+				<span>Lost Mysteries <small>of WPI</small></span>
+			</a>
+			<a class="header-link" href="login.html">Login</a>
+		</header>
 
-    <main id="main">
-      <section class="dashboard" aria-labelledby="dashboard-title">
-        <p class="eyebrow">YOUR ADVENTURE</p>
-        <div class="dashboard-heading">
-          <h1 id="dashboard-title">Your discoveries</h1>
-          <div class="progress-count" aria-live="polite"><strong id="progress-count">0</strong><span>/ 5</span></div>
-        </div>
-        <div class="progress-track" role="progressbar" aria-label="Places explored" aria-valuemin="0" aria-valuemax="5"
-          aria-valuenow="0" id="progress-track">
-          <div id="progress-fill"></div>
-        </div>
-        <p class="progress-caption">places explored</p>
-        <div class="collected">
-          <h2>Collected locations</h2>
-          <ul id="collected-list" aria-live="polite">
-            <li class="empty-state">Your discoveries will appear here.</li>
-          </ul>
-        </div>
-      </section>
+		<main id="main">
+			<section class="dashboard" aria-labelledby="dashboard-title">
+				<p class="eyebrow">YOUR ADVENTURE</p>
+				<div class="dashboard-heading">
+					<h1 id="dashboard-title">Your discoveries</h1>
+					<div class="progress-count" aria-live="polite"><strong id="progress-count">0</strong><span>/
+							5</span></div>
+				</div>
+				<div class="progress-track" role="progressbar" aria-label="Places explored" aria-valuemin="0"
+					aria-valuemax="5" aria-valuenow="0" id="progress-track">
+					<div id="progress-fill"></div>
+				</div>
+				<p class="progress-caption">places explored</p>
+				<div class="collected">
+					<h2>Collected locations</h2>
+					<ul id="collected-list" aria-live="polite">
+						<li class="empty-state">Your discoveries will appear here.</li>
+					</ul>
+				</div>
+			</section>
 
-      <section class="locations" id="locations" aria-labelledby="locations-title">
-        <div class="section-title">
-          <div>
-            <p class="eyebrow">THE TRAIL</p>
-            <h2 id="locations-title">Puzzle locations</h2>
-          </div><span class="location-total">5 stops</span>
-        </div>
-        <p class="section-description">Mark a location when you find its clue.</p>
-        <div id="location-list" class="location-list"></div>
-      </section>
+			<section class="locations" id="locations" aria-labelledby="locations-title">
+				<div class="section-title">
+					<div>
+						<p class="eyebrow">THE TRAIL</p>
+						<h2 id="locations-title">Puzzle locations</h2>
+					</div><span class="location-total">5 stops</span>
+				</div>
+				<p class="section-description">Mark a location when you find its clue.</p>
+				<div id="location-list" class="location-list"></div>
+			</section>
 
-      <details class="instructions" id="how-to-play">
-        <summary>How to play <span aria-hidden="true">⌄</span></summary>
-        <ol>
-          <li>Visit a puzzle location and look for its puzzle or QR code.</li>
-          <li>Solve the puzzle and mark that location as found.</li>
-          <li>Combine clues from all five stops to find Gompei’s secret hiding spot.</li>
-        </ol>
-        <p>You can explore alone or with friends. The listed stops are planned locations and may change.</p>
-      </details>
-    </main>
+			<details class="instructions" id="how-to-play">
+				<summary>How to play <span aria-hidden="true">⌄</span></summary>
+				<ol>
+					<li>Visit a puzzle location and look for its puzzle or QR code.</li>
+					<li>Solve the puzzle and mark that location as found.</li>
+					<li>Combine clues from all five stops to find Gompei’s secret hiding spot.</li>
+				</ol>
+				<p>You can explore alone or with friends. The listed stops are planned locations and may change.</p>
+			</details>
+		</main>
 
-    <footer>Lost Mysteries of WPI <span>·</span> A campus puzzle trail</footer>
-  </div>
+		<footer>Lost Mysteries of WPI <span>·</span> A campus puzzle trail</footer>
+	</div>
+
+	<script>
+		// Main Page JavaScript
+		const locations = [
+			{ id: 'cc', name: 'Campus Center' },
+			{ id: 'unity', name: 'Unity' },
+			{ id: 'innovation', name: 'Innovation' },
+			{ id: 'fuller', name: 'Fuller' },
+			{ id: 'salisbury', name: 'Salisbury' },
+		];
+
+		const progressKey = 'lost-mysteries-progress-v1';
+		const list = document.querySelector('#location-list');
+		const collectedList = document.querySelector('#collected-list');
+
+		function storedProgress() {
+			try {
+				const value = JSON.parse(localStorage.getItem(progressKey) || '[]');
+				return Array.isArray(value) ? value.filter(id => locations.some(location => location.id === id)) : [];
+			} catch {
+				return [];
+			}
+		}
+
+		function updateProgress() {
+			const checked = [...list.querySelectorAll('input:checked')].map(input => input.value);
+			document.querySelector('#progress-count').textContent = checked.length;
+			document.querySelector('#progress-fill').style.width = `${checked.length / locations.length * 100}%`;
+			document.querySelector('#progress-track').setAttribute('aria-valuenow', checked.length);
+			collectedList.replaceChildren();
+
+			if (checked.length === 0) {
+				const empty = document.createElement('li');
+				empty.className = 'empty-state';
+				empty.textContent = 'Your discoveries will appear here.';
+				collectedList.append(empty);
+			} else {
+				locations.filter(location => checked.includes(location.id)).forEach(location => {
+					const item = document.createElement('li');
+					item.textContent = location.name;
+					collectedList.append(item);
+				});
+			}
+
+			try {
+				localStorage.setItem(progressKey, JSON.stringify(checked));
+			} catch {
+				console.warn('Progress could not be saved in this browser.');
+			}
+		}
+
+		const completed = storedProgress();
+
+		locations.forEach((location, index) => {
+			const row = document.createElement('article');
+			row.className = 'location';
+			row.innerHTML = `<span class="location-index">0${index + 1}</span><h3>${location.name}</h3><label class="location-check"><input type="checkbox" value="${location.id}" ${completed.includes(location.id) ? 'checked' : ''}><span>Found</span></label>`;
+			list.append(row);
+		});
+
+		list.addEventListener('change', updateProgress);
+		updateProgress();
+	</script>
+
 </body>
 
 </html>

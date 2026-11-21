@@ -12,4 +12,5 @@ This repository is named `Xunn3714.github.io`. In the repository's **Settings â†
 
 ## Team integration
 
-The current location list comes from the project one-pager and can be edited in `script.js` once final stops are decided. Puzzle pages and QR-code routes can link back to the `#locations` section. Account-based progress can be connected when the login work is ready.
+The current location list comes from the project one-pager and can be edited in the JavaScript section of `index.html` once final stops are decided. Puzzle pages and QR-code routes can link back to the `#locations` section. Account-based progress can be connected when the login work is ready.
+
