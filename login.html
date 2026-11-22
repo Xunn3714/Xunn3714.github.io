@@ -55,6 +55,9 @@
     </div>
 
     <script>
+        // Supabase API configuration
+        const SUPABASE_URL = 'https://iqmopypqjrpcxkwfvufh.supabase.co';
+        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_RFCOzAUH3LHKFFotX_1MIA_-uZ_pZpx';
         const usernameInput = document.querySelector('#username');
         const pinInput = document.querySelector('#pin');
         const loginBtn = document.querySelector('#login-btn');
@@ -84,13 +87,82 @@
             validateInputs();
         });
 
-        // Account authentication will be connected to the backend later
-        loginBtn.addEventListener('click', () => {
-            loginMessage.textContent = 'Login is not connected yet.';
+        // Log in through Supabase Edge Function
+        loginBtn.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            const username = usernameInput.value.trim();
+            const pin = pinInput.value;
+
+            loginBtn.disabled = true;
+            loginMessage.textContent = 'Logging in...';
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/login-player`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_PUBLISHABLE_KEY
+                    },
+                    body: JSON.stringify({ username, pin })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    loginMessage.textContent = data.error || 'Login failed.';
+                    return;
+                }
+
+                // Temporarily keep the session in this browser tab
+                sessionStorage.setItem('player_session', data.session.token);
+                sessionStorage.setItem('player_username', data.player.username);
+
+                window.location.href = 'index.html';
+
+            } catch (error) {
+                console.error('Login request failed:', error);
+                loginMessage.textContent = 'Unable to connect to the server.';
+            } finally {
+                validateInputs();
+            }
         });
 
-        registerBtn.addEventListener('click', () => {
-            loginMessage.textContent = 'Registration is not connected yet.';
+        // Register a new player through Supabase
+        registerBtn.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            const username = usernameInput.value.trim();
+            const pin = pinInput.value;
+
+            registerBtn.disabled = true;
+            loginMessage.textContent = 'Creating account...';
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/register-player`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_PUBLISHABLE_KEY
+                    },
+                    body: JSON.stringify({ username, pin })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    loginMessage.textContent = data.error || 'Registration failed.';
+                    return;
+                }
+
+                loginMessage.textContent = 'Account created successfully! Please log in.';
+
+            } catch (error) {
+                console.error('Registration request failed:', error);
+                loginMessage.textContent = 'Unable to connect to the server.';
+            } finally {
+                validateInputs();
+            }
         });
 
         document.querySelector('#login-form').addEventListener('submit', (event) => {

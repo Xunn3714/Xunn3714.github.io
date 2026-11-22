@@ -18,7 +18,7 @@
 				<span class="brand-symbol" aria-hidden="true">✦</span>
 				<span>Lost Mysteries <small>of WPI</small></span>
 			</a>
-			<a class="header-link" href="login.html">Login</a>
+			<a class="header-link" href="login.html" id="account-link">Login</a>
 		</header>
 
 		<main id="main">
@@ -68,7 +68,49 @@
 	</div>
 
 	<script>
-		// Main Page JavaScript
+		const SUPABASE_URL = 'https://iqmopypqjrpcxkwfvufh.supabase.co';
+        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_RFCOzAUH3LHKFFotX_1MIA_-uZ_pZpx';
+		const accountLink = document.querySelector('#account-link');
+
+		// Check the player's session when opening the homepage
+		async function checkLoginStatus() {
+			const token = sessionStorage.getItem('player_session');
+			const username = sessionStorage.getItem('player_username');
+
+			if (!token || !username) {
+				accountLink.textContent = 'Login';
+				return;
+			}
+
+			try {
+				const response = await fetch(`${SUPABASE_URL}/functions/v1/get-player-progress`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'apikey': SUPABASE_PUBLISHABLE_KEY,
+						'Authorization': `Bearer ${token}`
+					},
+					body: JSON.stringify({})
+				});
+
+				if (response.ok) {
+					accountLink.textContent = username;
+				} else {
+					accountLink.textContent = 'Login';
+
+					if (response.status === 401) {
+						sessionStorage.removeItem('player_session');
+						sessionStorage.removeItem('player_username');
+					}
+				}
+			} catch (error) {
+				console.error('Session verification failed:', error);
+				accountLink.textContent = 'Login';
+			}
+		}
+
+		checkLoginStatus();
+
 		const locations = [
 			{ id: 'cc', name: 'Campus Center' },
 			{ id: 'unity', name: 'Unity' },
