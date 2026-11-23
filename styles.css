@@ -533,3 +533,59 @@ footer span {
     font: 12px/1.6 Arial, sans-serif;
     text-align: center;
 }
+
+
+/* PIN visibility toggle */
+.pin-field {
+    position: relative;
+}
+
+.pin-field input {
+    padding-right: 52px;
+}
+
+.pin-field input::-ms-reveal {
+    display: none;
+}
+
+#toggle-pin {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+    padding: 0;
+
+    background: transparent;
+    border: none;
+    color: #738278;
+    cursor: pointer;
+}
+
+#toggle-pin:hover {
+    color: #183c32;
+}
+
+#toggle-pin:focus-visible {
+    outline: 2px solid #527d66;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+#toggle-pin[aria-pressed="false"]::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}

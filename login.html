@@ -39,8 +39,21 @@
 
                     <div class="form-group">
                         <label for="pin">4-Digit PIN</label>
-                        <input type="password" id="pin" name="pin" placeholder="Enter your PIN" inputmode="numeric"
-                            pattern="[0-9]{4}" maxlength="4" required>
+
+                        <div class="pin-field">
+                            <input type="password" id="pin" name="pin" placeholder="Enter your PIN" inputmode="numeric"
+                                pattern="[0-9]{4}" maxlength="4" required>
+
+                            <button type="button" id="toggle-pin" aria-label="Show PIN" aria-controls="pin"
+                                aria-pressed="false">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                                    stroke-width="2" aria-hidden="true">
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </button>
+                        </div>
+
                     </div>
 
                     <p id="login-message" role="status"></p>
@@ -63,8 +76,27 @@
         // Supabase API configuration
         const SUPABASE_URL = 'https://iqmopypqjrpcxkwfvufh.supabase.co';
         const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_RFCOzAUH3LHKFFotX_1MIA_-uZ_pZpx';
+        
         const usernameInput = document.querySelector('#username');
         const pinInput = document.querySelector('#pin');
+        const togglePinBtn = document.querySelector('#toggle-pin');
+
+        togglePinBtn.addEventListener('click', () => {
+            const isHidden = pinInput.type === 'password';
+
+            pinInput.type = isHidden ? 'text' : 'password';
+
+            togglePinBtn.setAttribute(
+                'aria-label',
+                isHidden ? 'Hide PIN' : 'Show PIN'
+            );
+
+            togglePinBtn.setAttribute(
+                'aria-pressed',
+                String(isHidden)
+            );
+        });
+
         const loginBtn = document.querySelector('#login-btn');
         const registerBtn = document.querySelector('#register-btn');
         const loginMessage = document.querySelector('#login-message');
