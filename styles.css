@@ -508,3 +508,28 @@ footer span {
         grid-template-columns: 1fr;
     }
 }
+
+.account-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#logout-btn {
+    appearance: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font: 600 12px Arial, sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.account-reminder {
+    margin: 20px auto 0;
+    max-width: 340px;
+    color: #738278;
+    font: 12px/1.6 Arial, sans-serif;
+    text-align: center;
+}

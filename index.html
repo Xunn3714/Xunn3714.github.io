@@ -18,7 +18,10 @@
 				<span class="brand-symbol" aria-hidden="true">✦</span>
 				<span>Lost Mysteries <small>of WPI</small></span>
 			</a>
-			<a class="header-link" href="login.html" id="account-link">Login</a>
+			<div class="account-actions">
+				<a class="header-link" href="login.html" id="account-link">Login</a>
+				<button class="header-link" type="button" id="logout-btn" hidden>Log Out</button>
+			</div>
 		</header>
 
 		<main id="main">
@@ -69,8 +72,9 @@
 
 	<script>
 		const SUPABASE_URL = 'https://iqmopypqjrpcxkwfvufh.supabase.co';
-        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_RFCOzAUH3LHKFFotX_1MIA_-uZ_pZpx';
+		const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_RFCOzAUH3LHKFFotX_1MIA_-uZ_pZpx';
 		const accountLink = document.querySelector('#account-link');
+		const logoutBtn = document.querySelector('#logout-btn');
 
 		// Check the player's session when opening the homepage
 		async function checkLoginStatus() {
@@ -95,8 +99,10 @@
 
 				if (response.ok) {
 					accountLink.textContent = username;
+					logoutBtn.hidden = false;
 				} else {
 					accountLink.textContent = 'Login';
+					logoutBtn.hidden = true;
 
 					if (response.status === 401) {
 						sessionStorage.removeItem('player_session');
@@ -110,6 +116,49 @@
 		}
 
 		checkLoginStatus();
+
+		// Log out and revoke the current session
+		logoutBtn.addEventListener('click', async () => {
+			const token = sessionStorage.getItem('player_session');
+
+			if (!token) {
+				sessionStorage.removeItem('player_username');
+				window.location.href = 'login.html';
+				return;
+			}
+
+			logoutBtn.disabled = true;
+			logoutBtn.textContent = 'Logging out...';
+
+			try {
+				const response = await fetch(`${SUPABASE_URL}/functions/v1/logout-player`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'apikey': SUPABASE_PUBLISHABLE_KEY,
+						'Authorization': `Bearer ${token}`
+					},
+					body: JSON.stringify({})
+				});
+
+				if (!response.ok && response.status !== 401) {
+					throw new Error(`Logout failed: ${response.status}`);
+				}
+
+				// Clear the local session after server-side logout
+				sessionStorage.removeItem('player_session');
+				sessionStorage.removeItem('player_username');
+
+				window.location.href = 'login.html';
+
+			} catch (error) {
+				console.error('Logout request failed:', error);
+				alert('Unable to log out. Please try again.');
+			} finally {
+				logoutBtn.disabled = false;
+				logoutBtn.textContent = 'Log Out';
+			}
+		});
 
 		const locations = [
 			{ id: 'cc', name: 'Campus Center' },
