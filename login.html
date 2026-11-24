@@ -76,6 +76,10 @@
         // Supabase API configuration
         const SUPABASE_URL = 'https://iqmopypqjrpcxkwfvufh.supabase.co';
         const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_RFCOzAUH3LHKFFotX_1MIA_-uZ_pZpx';
+        const requestedReturnPage = new URLSearchParams(window.location.search).get('next');
+        const returnPage = ['circuits.html', 'puzzleboy.html', 'innovation.html'].includes(requestedReturnPage)
+            ? requestedReturnPage
+            : 'index.html';
         
         const usernameInput = document.querySelector('#username');
         const pinInput = document.querySelector('#pin');
@@ -155,7 +159,7 @@
                 sessionStorage.setItem('player_session', data.session.token);
                 sessionStorage.setItem('player_username', data.player.username);
 
-                window.location.href = 'index.html';
+                window.location.href = returnPage;
 
             } catch (error) {
                 console.error('Login request failed:', error);

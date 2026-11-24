@@ -68,6 +68,12 @@ body.circuits-page {
         text-decoration: none;
     }
 
+    .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
     .intro {
         margin: 0 auto 23px;
         text-align: center;
