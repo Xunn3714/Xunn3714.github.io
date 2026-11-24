@@ -63,11 +63,11 @@
 		const logoutBtn = document.querySelector('#logout-btn');
 
 		const locations = [
-			{ id: 'cc', name: 'Campus Center' },
-			{ id: 'unity', name: 'Unity' },
-			{ id: 'innovation', name: 'Innovation' },
-			{ id: 'fuller', name: 'Fuller' },
-			{ id: 'salisbury', name: 'Salisbury' },
+			{id: 'innovation', name: 'Innovation Studio'},
+			{id: 'fuller', name: 'Fuller Lab'},
+			{id: 'unity', name: 'Unity Hall'},
+			{id: 'library', name: 'Gordon Library'},
+			{id: 'ak', name: 'Atwater Kent'}
 		];
 		const list = document.querySelector('#location-list');
 		const progressMessage = document.querySelector('#progress-message');
@@ -127,21 +127,21 @@
 				});
 
 				if (response.ok) {
-				const data = await response.json();
-				const completedIds = completedIdsFrom(data);
-				if (completedIds === null) {
-					progressMessage.textContent = 'Account progress is not available yet.';
+					const data = await response.json();
+					const completedIds = completedIdsFrom(data);
+					if (completedIds === null) {
+						progressMessage.textContent = 'Account progress is not available yet.';
+					} else {
+						renderProgress(completedIds);
+						progressMessage.textContent = '';
+					}
 				} else {
-					renderProgress(completedIds);
-					progressMessage.textContent = '';
-				}
-				} else {
-				progressMessage.textContent = 'Unable to load your saved progress.';
+					progressMessage.textContent = 'Unable to load your saved progress.';
 
 					if (response.status === 401) {
-					accountLink.textContent = 'Login';
-					logoutBtn.hidden = true;
-					progressMessage.textContent = 'Session expired. Log in to see your saved progress.';
+						accountLink.textContent = 'Login';
+						logoutBtn.hidden = true;
+						progressMessage.textContent = 'Session expired. Log in to see your saved progress.';
 						sessionStorage.removeItem('player_session');
 						sessionStorage.removeItem('player_username');
 					}

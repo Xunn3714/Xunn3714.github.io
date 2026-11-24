@@ -14,7 +14,8 @@
     <a class="skip-link" href="#puzzle">Skip to crossword</a>
     <div class="page">
         <header class="topbar">
-            <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✦</span>Lost Mysteries <small>of WPI</small></a>
+            <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✦</span>Lost Mysteries
+                <small>of WPI</small></a>
             <nav class="top-actions" aria-label="Puzzle navigation">
                 <a id="login-link" href="login.html?next=innovation.html">Login</a>
                 <a href="index.html">← Main page</a>
@@ -34,9 +35,11 @@
                         <h2 id="board-title">Crossword</h2>
                         <span>8 words</span>
                     </div>
-                    <p class="board-help">Tap a square or a clue to start. Tap a crossing square again to switch directions.</p>
+                    <p class="board-help">Tap a square or a clue to start. Tap a crossing square again to switch
+                        directions.</p>
                     <div id="board" class="board" aria-label="Innovation Studio crossword grid"></div>
-                    <p id="status" class="status" role="status" aria-live="polite">Fill the grid, then check your answers.</p>
+                    <p id="status" class="status" role="status" aria-live="polite">Fill the grid, then check your
+                        answers.</p>
                     <div class="buttons">
                         <button id="check-button" class="primary-button" type="button">Check answers</button>
                         <button id="clear-button" class="secondary-button" type="button">Clear grid</button>
@@ -62,6 +65,8 @@
 
     <script>
         (() => {
+            const SUPABASE_URL = 'https://iqmopypqjrpcxkwfvufh.supabase.co';
+            const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_RFCOzAUH3LHKFFotX_1MIA_-uZ_pZpx';
             const username = sessionStorage.getItem('player_username');
             if (sessionStorage.getItem('player_session') && username) {
                 document.querySelector('#login-link').textContent = username;
@@ -247,6 +252,71 @@
                 }
             }
 
+
+            // Save the completed crossword to the player's account
+            let progressSavePending = false;
+
+            async function saveInnovationProgress() {
+                if (progressSavePending) return;
+
+                const token = sessionStorage.getItem('player_session');
+
+                if (!token) {
+                    status.textContent = 'Crossword complete! Please log in to save your progress.';
+                    return;
+                }
+
+                // Collect the player's actual answers
+                const answers = entries.map(entry =>
+                    entry.keys.map(cellKey =>
+                        cells.get(cellKey).input.value
+                    ).join('')
+                );
+
+                progressSavePending = true;
+                status.textContent = 'Crossword complete! Saving progress...';
+
+                try {
+                    const response = await fetch(
+                        `${SUPABASE_URL}/functions/v1/complete-puzzle`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': SUPABASE_PUBLISHABLE_KEY,
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                                puzzle_id: 'innovation',
+                                answers: answers
+                            })
+                        }
+                    );
+
+                    if (response.status === 401) {
+                        sessionStorage.removeItem('player_session');
+                        sessionStorage.removeItem('player_username');
+                        document.querySelector('#login-link').textContent = 'Log in';
+
+                        status.textContent = 'Session expired. Please log in and check your answers again.';
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`Progress save failed: ${response.status}`);
+                    }
+
+                    status.textContent = 'Crossword complete! Progress saved to your account.';
+                    status.classList.add('success');
+
+                } catch (error) {
+                    console.error('Unable to save progress:', error);
+                    status.textContent = 'Crossword complete, but progress could not be saved. Please try Check Answers again.';
+                } finally {
+                    progressSavePending = false;
+                }
+            }
+
             document.querySelector('#check-button').addEventListener('click', () => {
                 let correctWords = 0;
                 entries.forEach(entry => {
@@ -256,6 +326,7 @@
                 if (correctWords === entries.length) {
                     status.textContent = 'Crossword complete! You solved every clue.';
                     status.classList.add('success');
+                    saveInnovationProgress();
                 } else {
                     status.textContent = `${correctWords} of ${entries.length} words correct. Check the highlighted squares and keep going.`;
                     status.classList.remove('success');
