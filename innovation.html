@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#183c32">
+    <meta name="description" content="Solve the Innovation Studio crossword in Lost Mysteries of WPI.">
+    <title>Innovation Studio Crossword — Lost Mysteries of WPI</title>
+    <link rel="stylesheet" href="innovation.css">
+</head>
+
+<body>
+    <a class="skip-link" href="#puzzle">Skip to crossword</a>
+    <div class="page">
+        <header class="topbar">
+            <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✦</span>Lost Mysteries <small>of WPI</small></a>
+            <nav class="top-actions" aria-label="Puzzle navigation">
+                <a id="login-link" href="login.html?next=innovation.html">Login</a>
+                <a href="index.html">← Main page</a>
+            </nav>
+        </header>
+
+        <main id="puzzle">
+            <div class="intro">
+                <p class="eyebrow">Innovation Studio · Puzzle</p>
+                <h1>The Maker's Crossword</h1>
+                <p>Explore the words behind the ideas, tools, and projects made here.</p>
+            </div>
+
+            <div class="puzzle-layout">
+                <section class="board-panel" aria-labelledby="board-title">
+                    <div class="panel-heading">
+                        <h2 id="board-title">Crossword</h2>
+                        <span>8 words</span>
+                    </div>
+                    <p class="board-help">Tap a square or a clue to start. Tap a crossing square again to switch directions.</p>
+                    <div id="board" class="board" aria-label="Innovation Studio crossword grid"></div>
+                    <p id="status" class="status" role="status" aria-live="polite">Fill the grid, then check your answers.</p>
+                    <div class="buttons">
+                        <button id="check-button" class="primary-button" type="button">Check answers</button>
+                        <button id="clear-button" class="secondary-button" type="button">Clear grid</button>
+                    </div>
+                </section>
+
+                <section class="clue-panel" aria-labelledby="clues-title">
+                    <h2 id="clues-title">Clues</h2>
+                    <div class="clue-columns">
+                        <div>
+                            <h3>Across</h3>
+                            <ol id="across-clues" class="clue-list"></ol>
+                        </div>
+                        <div>
+                            <h3>Down</h3>
+                            <ol id="down-clues" class="clue-list"></ol>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        (() => {
+            const username = sessionStorage.getItem('player_username');
+            if (sessionStorage.getItem('player_session') && username) {
+                document.querySelector('#login-link').textContent = username;
+            }
+
+            // Coordinates are zero-based; every answer crosses at least one other answer.
+            const entries = [
+                { answer: 'TOOLS', row: 0, col: 6, direction: 'down', clue: 'Hammers, rulers, and screwdrivers are examples of these.' },
+                { answer: 'IDEA', row: 1, col: 2, direction: 'down', clue: 'A thought that could become a new project.' },
+                { answer: 'ROBOT', row: 1, col: 5, direction: 'across', clue: 'A machine that can do some tasks on its own.' },
+                { answer: 'DESIGN', row: 3, col: 4, direction: 'down', clue: 'To plan how something will look and work.' },
+                { answer: 'TEAM', row: 3, col: 10, direction: 'down', clue: 'A group of people working together.' },
+                { answer: 'MAKERSPACE', row: 4, col: 1, direction: 'across', clue: 'A workshop where students can make and build things.' },
+                { answer: 'BUILD', row: 6, col: 2, direction: 'across', clue: 'To put pieces together to make something.' },
+                { answer: 'ENGINEERING', row: 8, col: 0, direction: 'across', clue: 'Using science and math to make things that solve problems.' }
+            ];
+            const width = 11;
+            const height = 9;
+            const cells = new Map();
+            const board = document.querySelector('#board');
+            const status = document.querySelector('#status');
+            const storageKey = 'innovation_crossword_draft_v2';
+            const key = (row, col) => `${row},${col}`;
+            let selectedEntry = null;
+            let selectedCell = null;
+
+            entries.forEach(entry => {
+                entry.keys = [];
+                for (let index = 0; index < entry.answer.length; index++) {
+                    const row = entry.row + (entry.direction === 'down' ? index : 0);
+                    const col = entry.col + (entry.direction === 'across' ? index : 0);
+                    const cellKey = key(row, col);
+                    const letter = entry.answer[index];
+                    const cell = cells.get(cellKey) || { row, col, answer: letter, entries: [] };
+                    if (cell.answer !== letter) throw new Error('Crossword answers disagree at an intersection.');
+                    cell.entries.push(entry);
+                    cells.set(cellKey, cell);
+                    entry.keys.push(cellKey);
+                }
+            });
+
+            const starts = [...new Set(entries.map(entry => key(entry.row, entry.col)))].sort((a, b) => {
+                const [ar, ac] = a.split(',').map(Number);
+                const [br, bc] = b.split(',').map(Number);
+                return ar - br || ac - bc;
+            });
+            starts.forEach((cellKey, index) => { cells.get(cellKey).number = index + 1; });
+            entries.forEach(entry => { entry.number = cells.get(key(entry.row, entry.col)).number; });
+
+            let saved = {};
+            try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch { saved = {}; }
+            board.style.setProperty('--columns', width);
+            for (let row = 0; row < height; row++) {
+                for (let col = 0; col < width; col++) {
+                    const cellKey = key(row, col);
+                    const cell = cells.get(cellKey);
+                    if (!cell) {
+                        const space = document.createElement('div');
+                        space.className = 'empty-square';
+                        space.setAttribute('aria-hidden', 'true');
+                        board.append(space);
+                        continue;
+                    }
+                    const square = document.createElement('div');
+                    square.className = 'square';
+                    if (cell.number) {
+                        const number = document.createElement('span');
+                        number.className = 'square-number';
+                        number.textContent = cell.number;
+                        square.append(number);
+                    }
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.inputMode = 'text';
+                    input.autocomplete = 'off';
+                    input.autocapitalize = 'characters';
+                    input.spellcheck = false;
+                    input.maxLength = 1;
+                    input.value = /^[A-Z]$/.test(saved[cellKey]) ? saved[cellKey] : '';
+                    input.setAttribute('aria-label', `Row ${row + 1}, column ${col + 1}${cell.number ? `, clue ${cell.number}` : ''}`);
+                    input.addEventListener('click', () => { selectCell(cellKey, true); input.select(); });
+                    input.addEventListener('focus', () => {
+                        if (selectedCell !== cellKey) selectCell(cellKey, false);
+                        input.select();
+                    });
+                    input.addEventListener('input', () => enterLetter(cellKey));
+                    input.addEventListener('keydown', event => handleKey(event, cellKey));
+                    square.append(input);
+                    board.append(square);
+                    cell.input = input;
+                    cell.square = square;
+                }
+            }
+
+            for (const direction of ['across', 'down']) {
+                const list = document.querySelector(`#${direction}-clues`);
+                entries.filter(entry => entry.direction === direction).sort((a, b) => a.number - b.number).forEach(entry => {
+                    const item = document.createElement('li');
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'clue-button';
+                    button.innerHTML = `<strong>${entry.number}.</strong> `;
+                    button.append(document.createTextNode(entry.clue));
+                    button.addEventListener('click', () => {
+                        const firstEmpty = entry.keys.find(cellKey => !cells.get(cellKey).input.value);
+                        selectCell(firstEmpty || entry.keys[0], false, entry);
+                        cells.get(selectedCell).input.focus();
+                    });
+                    item.append(button);
+                    list.append(item);
+                    entry.button = button;
+                });
+            }
+
+            function selectCell(cellKey, toggle, forcedEntry) {
+                const cell = cells.get(cellKey);
+                if (!cell) return;
+                if (forcedEntry) selectedEntry = forcedEntry;
+                else if (toggle && selectedCell === cellKey && cell.entries.length > 1) {
+                    selectedEntry = cell.entries.find(entry => entry !== selectedEntry);
+                } else if (!selectedEntry || !cell.entries.includes(selectedEntry)) {
+                    selectedEntry = cell.entries.find(entry => entry.direction === 'across') || cell.entries[0];
+                }
+                selectedCell = cellKey;
+                cells.forEach((value, currentKey) => {
+                    value.square.classList.toggle('in-word', selectedEntry.keys.includes(currentKey));
+                    value.square.classList.toggle('current', currentKey === cellKey);
+                });
+                entries.forEach(entry => entry.button.classList.toggle('selected', entry === selectedEntry));
+            }
+
+            function saveDraft() {
+                const draft = {};
+                cells.forEach((cell, cellKey) => { if (cell.input.value) draft[cellKey] = cell.input.value; });
+                try { localStorage.setItem(storageKey, JSON.stringify(draft)); } catch { /* Storage may be unavailable. */ }
+            }
+
+            function enterLetter(cellKey) {
+                const cell = cells.get(cellKey);
+                const letter = cell.input.value.replace(/[^a-z]/gi, '').slice(-1).toUpperCase();
+                cell.input.value = letter;
+                cell.square.classList.remove('incorrect');
+                status.textContent = 'Fill the grid, then check your answers.';
+                status.classList.remove('success');
+                saveDraft();
+                if (!letter) return;
+                selectCell(cellKey, false);
+                const next = selectedEntry.keys[selectedEntry.keys.indexOf(cellKey) + 1];
+                if (next) {
+                    selectCell(next, false);
+                    cells.get(next).input.focus();
+                }
+            }
+
+            function handleKey(event, cellKey) {
+                if (/^[a-z]$/i.test(event.key)) {
+                    event.preventDefault();
+                    cells.get(cellKey).input.value = event.key.toUpperCase();
+                    enterLetter(cellKey);
+                    return;
+                }
+                if (event.key === 'Backspace' && !cells.get(cellKey).input.value) {
+                    const previous = selectedEntry.keys[selectedEntry.keys.indexOf(cellKey) - 1];
+                    if (previous) {
+                        event.preventDefault();
+                        selectCell(previous, false);
+                        cells.get(previous).input.focus();
+                        cells.get(previous).input.value = '';
+                        saveDraft();
+                    }
+                }
+                const moves = { ArrowLeft: [0, -1, 'across'], ArrowRight: [0, 1, 'across'], ArrowUp: [-1, 0, 'down'], ArrowDown: [1, 0, 'down'] };
+                const move = moves[event.key];
+                if (move) {
+                    event.preventDefault();
+                    const cell = cells.get(cellKey);
+                    const next = key(cell.row + move[0], cell.col + move[1]);
+                    if (cells.has(next)) {
+                        const entry = cells.get(next).entries.find(item => item.direction === move[2]);
+                        selectCell(next, false, entry);
+                        cells.get(next).input.focus();
+                    }
+                }
+            }
+
+            document.querySelector('#check-button').addEventListener('click', () => {
+                let correctWords = 0;
+                entries.forEach(entry => {
+                    if (entry.keys.every((cellKey, index) => cells.get(cellKey).input.value === entry.answer[index])) correctWords++;
+                });
+                cells.forEach(cell => cell.square.classList.toggle('incorrect', Boolean(cell.input.value && cell.input.value !== cell.answer)));
+                if (correctWords === entries.length) {
+                    status.textContent = 'Crossword complete! You solved every clue.';
+                    status.classList.add('success');
+                } else {
+                    status.textContent = `${correctWords} of ${entries.length} words correct. Check the highlighted squares and keep going.`;
+                    status.classList.remove('success');
+                }
+            });
+
+            document.querySelector('#clear-button').addEventListener('click', () => {
+                cells.forEach(cell => {
+                    cell.input.value = '';
+                    cell.square.classList.remove('incorrect');
+                });
+                status.textContent = 'Grid cleared. Choose a clue to begin again.';
+                status.classList.remove('success');
+                saveDraft();
+                selectCell(entries[0].keys[0], false, entries[0]);
+            });
+
+            selectCell(entries[0].keys[0], false, entries[0]);
+        })();
+    </script>
+</body>
+
+</html>

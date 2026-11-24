@@ -1,6 +1,6 @@
 # Lost Mysteries of WPI
 
-A mobile-first main page for a campus puzzle trail. Visitors see their collected locations and progress immediately, followed by a compact list of five planned puzzle stops. Progress is stored in the visitor's current browser through `localStorage`.
+A mobile-first main page for a campus puzzle trail. Visitors see their account progress immediately, followed by a compact list of five planned puzzle stops and expandable QR-location hints. The homepage reads account progress through the `get-player-progress` Supabase Edge Function.
 
 ## Run locally
 
@@ -12,5 +12,9 @@ This repository is named `Xunn3714.github.io`. In the repository's **Settings â†
 
 ## Team integration
 
-The current location list comes from the project one-pager and can be edited in the JavaScript section of `index.html` once final stops are decided. Puzzle pages and QR-code routes can link back to the `#locations` section. Account-based progress can be connected when the login work is ready.
+The current location list comes from the project one-pager and can be edited in the JavaScript section of `index.html` once final stops are decided. Each hint currently identifies the building because exact QR placements have not been provided. Puzzle pages and QR-code routes can link back to the `#locations` section.
+
+The `circuits.html`, `puzzleboy.html`, and `innovation.html` pages have direct login and home links. Logging in from a puzzle page returns the player to that puzzle. The homepage does not link to puzzle pages, so their URLs can be distributed through QR codes. The Innovation Studio crossword saves an unfinished grid only in the current browser's local storage.
+
+The homepage displays progress returned by `get-player-progress` and does not let visitors mark locations themselves. Automatic account storage requires the puzzle completion flow and a server-side write endpoint. Neither is included in this repository yet, so completing a puzzle currently cannot update the account record from this site.
 

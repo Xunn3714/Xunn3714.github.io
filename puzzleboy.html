@@ -16,7 +16,10 @@
         <header class="topbar">
             <a class="brand" href="index.html"><span class="brand-mark"
                     aria-hidden="true">✦</span><span>PUZZLEBOY</span></a>
-            <a class="top-link" href="index.html">← Back to site</a>
+            <nav class="top-actions" aria-label="Puzzle navigation">
+                <a class="top-link" id="login-link" href="login.html?next=puzzleboy.html">Log in</a>
+                <a class="top-link" href="index.html">← Back to site</a>
+            </nav>
         </header>
         <main>
             <section class="intro" aria-labelledby="game-title">
@@ -80,6 +83,12 @@
     </div>
     <script>
         (() => {
+            const token = sessionStorage.getItem("player_session");
+            const username = sessionStorage.getItem("player_username");
+            if (token && username) {
+                document.querySelector("#login-link").textContent = username;
+            }
+
             const width = 14;
             const height = 11;
             const floor = new Set();
